@@ -32,15 +32,17 @@ function Properties() {
   const [objects, setObjects] = useState([]);
 
   useEffect(() => {
-    axios.get(`${server_url}/api/objects/`)
-      .then(response => {
-        setObjects(response.data);
-        console.log(response.data); 
-      })
-      .catch(error => {
-        console.error('Error fetching objects:', error);
-      });
+    fetchObjects(); 
   }, []);
+
+  const fetchObjects = async () => {
+    try {
+      const response = await axios.get(`${server_url}/api/objects/`);
+      setObjects(response.data);
+    } catch (error) {
+      console.error('Error fetching objects:', error);
+    }
+  };
 
   // Sample data for the table
   const propertiesData = [
@@ -70,6 +72,7 @@ function Properties() {
     axios.post(`${server_url}/api/objects/`, { name: newObjectName })
     .then(response => {
       console.log('Object added successfully:', response.data);
+      fetchObjects(); 
       handleCloseDialog();
     })
     .catch(error => {

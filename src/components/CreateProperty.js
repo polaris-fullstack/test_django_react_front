@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,17 +8,41 @@ import {
   Select,
   MenuItem,
   Button,
-  Paper,
   Stack
 } from "@mui/material";
+import axios from 'axios';
+import { server_url } from '../constants';
+
 
 function CreateProperty() {
+    const propertyTypes = [        
+        { id: 1, name: 'Single Line Input' },
+        { id: 2, name: 'Multi Line Input' },
+        { id: 3, name: 'Checkbox' },
+        { id: 4, name: 'Dropdown' },
+        { id: 5, name: 'Radio' },
+        { id: 6, name: 'Date' },
+        { id: 7, name: 'Time' },
+        { id: 8, name: 'Date and Time' },
+        { id: 9, name: 'Number' }        
+    ];
     const [formData, setFormData] = useState({
         propertyLabel: '',
         fieldType: '',
         objectType: '',
         description: ''
     });
+    const [objects, setObjects] = useState([]);    
+
+    useEffect(() => {
+        axios.get(`${server_url}/api/objects/`)
+            .then(response => {
+                setObjects(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching objects:', error);
+            });
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,16 +87,14 @@ function CreateProperty() {
                             label="Field Type"
                             onChange={handleChange}
                         >
-                            <MenuItem value="text">Text</MenuItem>
-                            <MenuItem value="number">Number</MenuItem>
-                            <MenuItem value="date">Date</MenuItem>
-                            <MenuItem value="boolean">Boolean</MenuItem>
-                            <MenuItem value="select">Select</MenuItem>
+                            {propertyTypes.map((property) => (
+                                <MenuItem value={property.id}>{property.name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     
                     <FormControl fullWidth required>
-                        <InputLabel id="object-type-label">Object Type</InputLabel>
+                        <InputLabel id="object-type-label">Object</InputLabel>
                         <Select
                             labelId="object-type-label"
                             id="object-type"
@@ -81,10 +103,9 @@ function CreateProperty() {
                             label="Object Type"
                             onChange={handleChange}
                         >
-                            <MenuItem value="residential">Residential</MenuItem>
-                            <MenuItem value="commercial">Commercial</MenuItem>
-                            <MenuItem value="industrial">Industrial</MenuItem>
-                            <MenuItem value="land">Land</MenuItem>
+                            {objects.map((object) => (
+                                <MenuItem value={object.id}>{object.name}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     

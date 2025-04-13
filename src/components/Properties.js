@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -26,10 +26,21 @@ import { server_url } from '../constants';
 
 
 function Properties() {
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [newObjectName, setNewObjectName] = useState('');
-  
+  const [objects, setObjects] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${server_url}/api/objects/`)
+      .then(response => {
+        setObjects(response.data);
+        console.log(response.data); 
+      })
+      .catch(error => {
+        console.error('Error fetching objects:', error);
+      });
+  }, []);
 
   // Sample data for the table
   const propertiesData = [
@@ -81,18 +92,19 @@ function Properties() {
       
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel id="category-filter-label">Filter by Type</InputLabel>
+          <InputLabel id="category-filter-label">Filter by Object</InputLabel>
           <Select
             labelId="category-filter-label"
             id="category-filter"
             value={categoryFilter}
             label="Filter by Type"
             onChange={handleCategoryChange}
-          >
-            <MenuItem value="all">All Types</MenuItem>
-            <MenuItem value="Residential">Residential</MenuItem>
-            <MenuItem value="Commercial">Commercial</MenuItem>
-            <MenuItem value="Industrial">Industrial</MenuItem>
+          >            
+            {
+              objects.map((object) => (
+                <MenuItem value={object.id}>{object.name}</MenuItem>
+              ))
+            }
           </Select>
         </FormControl>
         

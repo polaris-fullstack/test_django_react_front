@@ -48,6 +48,10 @@ function Properties() {
   };
 
   const fetchProperties = async (objectId) => {
+    if (objectId == 0 || objectId == "") {
+      setProperties([]);
+      return;
+    }
     try {
       const response = await axios.get(`${server_url}/api/properties/?object=${objectId}`);
       setProperties(response.data);

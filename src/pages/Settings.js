@@ -39,10 +39,12 @@ function Settings() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>        
-        <Typography variant="h4" component="h1">
-          Property Settings
-        </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+        <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Typography variant="h4" component="h1">
+            Data Management System
+          </Typography>
+        </a>
       </Box>
       
       <Box sx={{ display: 'flex', gap: 3 }}>

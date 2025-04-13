@@ -7,6 +7,7 @@ import {
   Typography,
   Alert,
 } from '@mui/material';
+import { server_url } from '../constants';
 
 const ContactForm = ({ onContactAdded }) => {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ const ContactForm = ({ onContactAdded }) => {
     setSuccess(false);
 
     try {
-      await axios.post('https://arvinjayromero.pythonanywhere.com/api/contacts/', formData);
+      await axios.post(`${server_url}/api/contacts/`, formData);
       setSuccess(true);
       setFormData({
         first_name: '',

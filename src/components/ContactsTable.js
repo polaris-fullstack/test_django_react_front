@@ -14,14 +14,21 @@ import {
   Button,
   TextField,
   Typography,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { server_url } from '../constants';
 
 const ContactsTable = ({ contacts, onContactUpdated }) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('all');
   const [editFormData, setEditFormData] = useState({
     first_name: '',
     last_name: '',
@@ -63,7 +70,7 @@ const ContactsTable = ({ contacts, onContactUpdated }) => {
 
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch(`https://arvinjayromero.pythonanywhere.com/api/contacts/${selectedContact.id}/`, {
+      const response = await fetch(`${server_url}/api/contacts/${selectedContact.id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +91,7 @@ const ContactsTable = ({ contacts, onContactUpdated }) => {
 
   const handleDeleteSubmit = async () => {
     try {      
-      const response = await fetch(`https://arvinjayromero.pythonanywhere.com/api/contacts/${selectedContact.id}/`, {
+      const response = await fetch(`${server_url}/api/contacts/${selectedContact.id}/`, {
         method: 'DELETE',
       });
 
@@ -99,11 +106,31 @@ const ContactsTable = ({ contacts, onContactUpdated }) => {
     }
   };
 
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
   return (
     <>
-      <Typography variant="h6" gutterBottom>
-        Contact List
-      </Typography>
+      <Box sx={{ mb: 3 }}>
+        <FormControl fullWidth>
+          <InputLabel id="dropdown-label">Filter Contacts</InputLabel>
+          <Select
+            labelId="dropdown-label"
+            id="dropdown-select"
+            value={selectedOption}
+            label="Filter Contacts"
+            onChange={handleOptionChange}
+          >
+            <MenuItem value="all">All Contacts</MenuItem>
+            <MenuItem value="a">Names starting with A</MenuItem>
+            <MenuItem value="b">Names starting with B</MenuItem>
+            <MenuItem value="c">Names starting with C</MenuItem>
+            <MenuItem value="other">Other Names</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
       <TableContainer>
         <Table>
           <TableHead>

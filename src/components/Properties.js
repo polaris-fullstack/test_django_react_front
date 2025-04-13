@@ -14,14 +14,21 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Button
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import InputAdornment from '@mui/material/InputAdornment';
 import AddIcon from '@mui/icons-material/Add';
+import axios from 'axios';
+import { server_url } from '../constants';
+
 
 function Properties() {
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newObjectName, setNewObjectName] = useState('');
   
 
   // Sample data for the table
@@ -38,8 +45,25 @@ function Properties() {
   };
 
   const handleAddObject = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setNewObjectName('');
+  };
+
+  const handleConfirmAdd = () => {
     // Add your logic for adding a new object here
-    console.log('Add Object clicked');
+    console.log('Adding new object:', newObjectName);
+    axios.post(`${server_url}/api/objects/`, { name: newObjectName })
+    .then(response => {
+      console.log('Object added successfully:', response.data);
+      handleCloseDialog();
+    })
+    .catch(error => {
+      console.error('Error adding object:', error);
+    });
   };
 
   const filteredProperties = propertiesData.filter(property => {
@@ -107,6 +131,28 @@ function Properties() {
           </TableBody>
         </Table>
       </TableContainer>
+      
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Add New Object</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Object Name"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={newObjectName}
+            onChange={(e) => setNewObjectName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleConfirmAdd} variant="contained" color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

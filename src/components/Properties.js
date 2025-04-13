@@ -22,18 +22,21 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
-import { server_url } from '../constants';
-
+import { server_url, getPropertyName } from '../constants';
 
 function Properties() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [newObjectName, setNewObjectName] = useState('');
   const [objects, setObjects] = useState([]);
+  const [properties, setProperties] = useState([]);
 
   useEffect(() => {
     fetchObjects(); 
   }, []);
+  useEffect(() => {
+    fetchProperties(categoryFilter);
+  }, [categoryFilter]);
 
   const fetchObjects = async () => {
     try {
@@ -41,6 +44,15 @@ function Properties() {
       setObjects(response.data);
     } catch (error) {
       console.error('Error fetching objects:', error);
+    }
+  };
+
+  const fetchProperties = async (objectId) => {
+    try {
+      const response = await axios.get(`${server_url}/api/properties/?object=${objectId}`);
+      setProperties(response.data);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
     }
   };
 
@@ -132,11 +144,11 @@ function Properties() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredProperties.map((property, index) => (
+            {properties.map((property, index) => (
               <TableRow key={property.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{property.name}</TableCell>
-                <TableCell>{property.type}</TableCell>
+                <TableCell>{getPropertyName(property.type)}</TableCell>
                 <TableCell align="right">
                   <Button size="small" color="primary">Edit</Button>
                   <Button size="small" color="error">Delete</Button>

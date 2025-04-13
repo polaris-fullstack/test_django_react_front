@@ -11,26 +11,17 @@ import {
   Stack
 } from "@mui/material";
 import axios from 'axios';
-import { server_url } from '../constants';
+import { server_url, propertyTypes, getPropertyName, getPropertyType } from '../constants';
 
 
 function CreateProperty() {
-    const propertyTypes = [        
-        { id: 1, name: 'Single Line Input' },
-        { id: 2, name: 'Multi Line Input' },
-        { id: 3, name: 'Checkbox' },
-        { id: 4, name: 'Dropdown' },
-        { id: 5, name: 'Radio' },
-        { id: 6, name: 'Date' },
-        { id: 7, name: 'Time' },
-        { id: 8, name: 'Date and Time' },
-        { id: 9, name: 'Number' }        
-    ];
+    
     const [formData, setFormData] = useState({
-        propertyLabel: '',
-        fieldType: '',
-        objectType: '',
-        description: ''
+        name: '',
+        type: '',
+        object: '',
+        description: '',
+        type_extra: ''
     });
     const [objects, setObjects] = useState([]);    
 
@@ -56,7 +47,16 @@ function CreateProperty() {
         e.preventDefault();
         // Handle form submission here
         console.log('Form submitted:', formData);
-        // You can add API call or other logic here
+        
+        axios.post(`${server_url}/api/properties/`, formData)
+            .then(response => {
+                console.log('Property created:', response.data);
+                window.alert("Property created successfully");
+                window.location.href = '/settings';
+            })
+            .catch(error => {
+                console.error('Error creating property:', error);
+            });
     };
 
     return (
@@ -66,13 +66,29 @@ function CreateProperty() {
             </Typography>
             
             <form onSubmit={handleSubmit} >
-                <Stack spacing={3}>
+                <Stack spacing={3}>                    
+                    <FormControl fullWidth required>
+                        <InputLabel id="object-type-label">Object</InputLabel>
+                        <Select
+                            labelId="object-type-label"
+                            id="object-type"
+                            name="object"
+                            value={formData.object}
+                            label="Object Type"
+                            onChange={handleChange}
+                        >
+                            {objects.map((object) => (
+                                <MenuItem value={object.id}>{object.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
                     <TextField
                         required
                         fullWidth
                         label="Property Label"
-                        name="propertyLabel"
-                        value={formData.propertyLabel}
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
                         variant="outlined"
                     />
@@ -82,8 +98,8 @@ function CreateProperty() {
                         <Select
                             labelId="field-type-label"
                             id="field-type"
-                            name="fieldType"
-                            value={formData.fieldType}
+                            name="type"
+                            value={formData.type}
                             label="Field Type"
                             onChange={handleChange}
                         >
@@ -92,22 +108,18 @@ function CreateProperty() {
                             ))}
                         </Select>
                     </FormControl>
-                    
-                    <FormControl fullWidth required>
-                        <InputLabel id="object-type-label">Object</InputLabel>
-                        <Select
-                            labelId="object-type-label"
-                            id="object-type"
-                            name="objectType"
-                            value={formData.objectType}
-                            label="Object Type"
+                    {
+                        (formData.type == 2 || formData.type == 3) &&
+                        <TextField
+                            fullWidth
+                            label="Extra"
+                            name="type_extra"
+                            value={formData.type_extra}
                             onChange={handleChange}
-                        >
-                            {objects.map((object) => (
-                                <MenuItem value={object.id}>{object.name}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                            variant="outlined"
+                            placeholder="Enter data list separated by commas(,)"
+                        />
+                    }                    
                     
                     <TextField
                         fullWidth

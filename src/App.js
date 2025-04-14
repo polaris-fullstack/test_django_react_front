@@ -62,20 +62,7 @@ function HomePage() {
         <Typography variant="h4" component="h1">
           Data Management System
         </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <IconButton 
-            color="primary" 
-            onClick={handleOpenDialog}
-            sx={{ 
-              backgroundColor: 'primary.main',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-              }
-            }}
-          >
-            <AddIcon />
-          </IconButton>
+        <Box sx={{ display: 'flex', gap: 1 }}>          
           <IconButton 
             color="primary" 
             onClick={handleSettingsClick}

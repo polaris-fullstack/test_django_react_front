@@ -1,4 +1,5 @@
-export const server_url = "http://localhost:8000";
+// export const server_url = "http://localhost:8000";
+export const server_url = "https://arvinjayromero.pythonanywhere.com";
 
 export const propertyTypes = [        
     { id: 0, name: 'Single Line Input', type: 'text' },
